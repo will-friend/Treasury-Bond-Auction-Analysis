@@ -3,7 +3,6 @@ import os
 from bs4 import BeautifulSoup
 from datetime import datetime
 import urllib
-import time
 
 class AuctionDownload:
 
@@ -37,15 +36,6 @@ class AuctionDownload:
     @end_date.setter
     def end_date(self, end_date):
         self._end_date = datetime.strptime(end_date, "%Y-%m-%d")
-
-    def _parse_date(self):
-        self.start_year = datetime.strftime(self.start_date, "%Y")
-        self.start_month = datetime.strftime(self.start_date, "%m")
-        self.start_day = datetime.strftime(self.start_date, "%d")
-
-        self.end_year = datetime.strftime(self.end_date, "%Y")
-        self.end_month = datetime.strftime(self.end_date, "%m")
-        self.end_day = datetime.strftime(self.end_date, "%d")
 
     def download(self):
 
@@ -167,8 +157,6 @@ class AuctionData:
 
         df = df2.dropna(axis=1)
 
-        df = df.drop(['ResultsPDFName'], axis=1)
-
         df = df.sort_values(by=['AuctionDate'])
 
         # Remove but save the auction date
@@ -186,16 +174,9 @@ class AuctionData:
         df.reset_index(inplace=True)
 
         df = df.drop(["index"], axis=1)
+        df = df.drop(['ResultsPDFName'], axis=1)
 
         return df
-
-downloader = AuctionDownload('./Data', "2023-01-01", "2023-12-31", "Bond")
-downloader.download()
-
-parser = AuctionData(os.path.join(os.getcwd(),'Data'), "Bond")
-df = parser.auction_to_dataframe()
-
-x = None
 
 
 
